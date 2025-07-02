@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气数据分析系统 - 用户登录</title>
+    <style>
+        /* 主体样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to right, #a8edea, #fed6e3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 登录容器 */
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 90%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* 左侧图文展示 */
+        .left-panel {
+            background: url('https://images.unsplash.com/photo-1517495306984-f84210f9daa8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat;
+            width: 40%;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .panel-content {
+            position: absolute;
+            z-index: 2;
+            color: white;
+            padding: 30px;
+        }
+
+        .panel-title {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        /* 右侧表单区域 */
+        .right-panel {
+            padding: 40px 60px 40px 40px;
+            width: 60%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #00c9a7;
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #00c9a7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+
+        .login-btn:hover {
+            background: #00a88a;
+        }
+
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .form-links a {
+            color: #00c9a7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .form-links a:hover {
+            color: #00a88a;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                width: 100%;
+                height: 200px;
+            }
+
+            .right-panel {
+                width: 100%;
+                padding: 30px 40px 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <!-- 左侧图文展示 -->
+    <div class="left-panel">
+        <div class="panel-content">
+            <div class="panel-title">探索天气奥秘</div>
+            <p>加入我们，一起分析全球气象数据，预测未来气候变化趋势，共建智慧气象生态。</p>
+        </div>
+    </div>
+
+    <!-- 右侧登录表单 -->
+    <div class="right-panel">
+        <h2>用户登录</h2>
+        <form novalidate>
+            <div class="form-group">
+                <label for="username">登录名称</label>
+                <input type="text" id="username" name="username" required
+                       minlength="4" maxlength="20"
+                       pattern="[a-zA-Z0-9_]{4,20}"
+                       title="4-20位字母、数字或下划线">
+            </div>
+
+            <div class="form-group">
+                <label for="password">登录密码</label>
+                <input type="password" id="password" name="password" required
+                       minlength="8"
+                       pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                       title="至少8位，包含大小写字母和数字">
+            </div>
+
+            <button type="submit" class="login-btn">立即登录</button>
+
+            <div class="form-links">
+                <a href="#">忘记密码？</a>
+                <a href="register.html">立即注册</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

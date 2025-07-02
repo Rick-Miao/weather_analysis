@@ -14,4 +14,9 @@ public class UserController {
     public String getRegister() {
         return "register";
     }
+
+    @GetMapping(value={"login"})
+    public String getLogin() {
+        return "login";
+    }
 }
