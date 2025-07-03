@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +52,7 @@
     <!-- 右侧登录表单 -->
     <div class="right-panel">
         <h2>用户登录</h2>
-        <form novalidate>
+        <form th:action="login" method="post" novalidate>
             <div class="form-group">
                 <label for="username">登录名称</label>
                 <input type="text" id="username" name="username" required

@@ -35,4 +35,16 @@ public class UserController {
     public String getLogin() {
         return "login";
     }
+
+    @PostMapping(value = {"login"})
+    public String login(String username, String password) {
+        // 实现登录
+        User user = userRepository.login(username, password);
+        // 登录成功，页面重定向
+        if (user != null) {
+            return "redirect:/index";
+        }
+        // 登录失败，页面重定向
+        return "redirect:/login";
+    }
 }
