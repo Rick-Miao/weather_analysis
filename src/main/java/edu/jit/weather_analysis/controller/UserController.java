@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class UserController {
-    @GetMapping(value={"register"})
+    @GetMapping(value = {"register"})
     public String getRegister() {
         return "register";
     }
 
-    @GetMapping(value={"login"})
+    @GetMapping(value = {"login"})
     public String getLogin() {
         return "login";
     }

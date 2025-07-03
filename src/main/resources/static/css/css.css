@@ -1,0 +1,149 @@
+/* 主体样式 */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to right, #a8edea, #fed6e3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 登录容器 */
+.login-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 90%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: row;
+}
+
+/* 注册容器 */
+.register-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 90%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: row;
+}
+
+/* 左侧图文展示 */
+.left-panel {
+    background: url(../images/bg.jpg) center/cover no-repeat;
+    width: 40%;
+    min-height: 400px;
+    position: relative;
+    display:flex;
+    align-items: center;
+}
+
+.left-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.panel-content {
+    position: absolute;
+    z-index: 2;
+    color: white;
+    padding: 30px;
+    max-width: 80%;
+}
+
+.panel-title {
+    font-size: 2em;
+    margin-bottom: 15px;
+    width: 200px;
+}
+
+/* 右侧表单区域 */
+.right-panel {
+    padding: 40px 60px 40px 40px;
+    width: 60%;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+input:focus {
+    border-color: #00c9a7;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #00c9a7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 15px;
+}
+
+.login-btn:hover {
+    background: #00a88a;
+}
+
+.password-strength {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background: #00c9a7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.register-btn:hover {
+    background: #00a88a;
+}
+
+.form-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.form-links a {
+    color: #00c9a7;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.form-links a:hover {
+    color: #00a88a;
+}
