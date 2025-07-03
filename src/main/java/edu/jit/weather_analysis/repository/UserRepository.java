@@ -7,8 +7,6 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 /**
  * 用户仓库类
  *
