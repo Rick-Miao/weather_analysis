@@ -50,4 +50,14 @@ public class HBaseUtils {
             e.printStackTrace();
         }
     }
+
+    public static Table getTable(String tableName) {
+        try {
+            TableName tn = TableName.valueOf(tableName);
+            return connection.getTable(tn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
