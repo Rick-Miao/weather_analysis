@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -72,8 +71,8 @@ public class ImportDataRepository {
                 weatherWritable.setCode(w.getCode());
                 weatherWritable.setDate(w.getDate());
                 weatherWritable.setPrecipitation(weatherWritable.getPrecipitation() + w.getPrecipitation());
-                weatherWritable.setMaxTemperature(Math.max(weatherWritable.getMaxTemperature(), w.getMaxTemperature()));
-                weatherWritable.setMinTemperature(Math.min(weatherWritable.getMinTemperature(), w.getMinTemperature()));
+                weatherWritable.setMaxTemperature(weatherWritable.getMaxTemperature() + w.getMaxTemperature());
+                weatherWritable.setMinTemperature(weatherWritable.getMinTemperature() + w.getMinTemperature());
                 weatherWritable.setAvgTemperature(weatherWritable.getAvgTemperature() + w.getAvgTemperature());
             }
             // 构建行键 列簇 列 值
