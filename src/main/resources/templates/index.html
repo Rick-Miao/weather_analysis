@@ -142,7 +142,7 @@
 
         <!-- 登录状态容器 -->
         <div th:if="${session.user != null}" class="message" style="font-size: 1.1em; color: #00c9a7;">
-            <a href="#" style="color: #00c9a7;" th:text="${session.user.username}"></a>，你好！
+            <a href="#" style="color: #00c9a7;" th:text="${session.user.nickname}"></a>，你好！
             <a href="logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
         </div>
     </div>
