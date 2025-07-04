@@ -30,24 +30,10 @@
         }
 
         /* 默认游客状态 */
-        .guest-message {
+        .message {
             display: block;
             color: #333;
             font-size: 1.1em;
-        }
-
-        /* 登录状态容器 */
-        .login-message {
-            display: none;
-        }
-
-        /* 使用锚点切换显示 */
-        #login:target ~ .user-status .guest-message {
-            display: none;
-        }
-
-        #login:target ~ .user-status .login-message {
-            display: block;
         }
 
         /* 模块通用样式 */
@@ -130,6 +116,7 @@
             .carousel {
                 height: 300px;
             }
+
             .seven-day-forecast {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -149,14 +136,14 @@
         </div>
 
         <!-- 用户状态消息 -->
-        <div class="guest-message" style="font-size: 1.1em; color: #333;">
-            游客，你好！<a href="/login" style="color: #00c9a7; text-decoration: underline;">立即登录</a>
+        <div th:if="${session.user == null}" class="message" style="font-size: 1.1em; color: #333;">
+            游客，你好！<a href="login" style="color: #00c9a7; text-decoration: underline;">立即登录</a>
         </div>
 
-        <!-- 登录状态容器（默认隐藏） -->
-        <div class="login-message" style="display: none; font-size: 1.1em; color: #00c9a7;">
-            <a href="#" style="color: #00c9a7;">用户昵称</a>，你好！
-            <a href="#logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
+        <!-- 登录状态容器 -->
+        <div th:if="${session.user != null}" class="message" style="font-size: 1.1em; color: #00c9a7;">
+            <a href="#" style="color: #00c9a7;" th:text="${session.user.username}"></a>，你好！
+            <a href="logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
         </div>
     </div>
 
@@ -245,15 +232,22 @@
 <!-- CSS动画实现轮播 -->
 <style>
     @keyframes fade {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
+
     .carousel-slide {
         animation: fade 0.5s ease-in-out;
     }
+
     .carousel-slide:nth-child(1) {
         animation-delay: 0s;
     }
+
     .carousel-slide:nth-child(2) {
         animation-delay: 5s;
     }
