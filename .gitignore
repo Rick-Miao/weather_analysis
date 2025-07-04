@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/hbase-site.xml
+/src/main/resources/static/favicon.ico
