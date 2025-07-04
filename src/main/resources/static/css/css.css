@@ -147,3 +147,12 @@ input:focus {
 .form-links a:hover {
     color: #00a88a;
 }
+
+.btn-link {
+    border: #a8edea 1px solid;
+    border-radius: 20px;
+    text-decoration: none;
+    color: black;
+    padding: 5px 10px;
+    background-color: #fed6e3;
+}

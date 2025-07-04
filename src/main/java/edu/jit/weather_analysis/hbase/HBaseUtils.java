@@ -60,4 +60,16 @@ public class HBaseUtils {
         }
         return null;
     }
+
+    public static Configuration getConf() {
+        return conf;
+    }
+
+    public static Connection getConnection() {
+        return connection;
+    }
+
+    public static Admin getAdmin() {
+        return admin;
+    }
 }

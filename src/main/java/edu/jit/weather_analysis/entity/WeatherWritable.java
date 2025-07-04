@@ -26,7 +26,7 @@ public class WeatherWritable implements WritableComparable<WeatherWritable> {
             return 1;
         }
         // 比较城市
-        if (this.code.compareTo(other.code)!=0) {
+        if (this.code.compareTo(other.code) != 0) {
             return this.code.compareTo(other.code);
         }
         // 比较日期
