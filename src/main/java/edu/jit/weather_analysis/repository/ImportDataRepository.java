@@ -75,6 +75,10 @@ public class ImportDataRepository {
                 weatherWritable.setMinTemperature(weatherWritable.getMinTemperature() + w.getMinTemperature());
                 weatherWritable.setAvgTemperature(weatherWritable.getAvgTemperature() + w.getAvgTemperature());
             }
+            // 数据清洗
+            if (weatherWritable.getMaxTemperature() <= 0 || weatherWritable.getMinTemperature() <= 0 || weatherWritable.getAvgTemperature() < 0) {
+                return;
+            }
             // 构建行键 列簇 列 值
             byte[] rk = Bytes.toBytes(weatherWritable.getCode() + "_" + weatherWritable.getDate());
             byte[] cf = Bytes.toBytes("info");
