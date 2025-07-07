@@ -2,12 +2,14 @@ package edu.jit.weather_analysis.controller;
 
 import edu.jit.weather_analysis.entity.WeatherWritable;
 import edu.jit.weather_analysis.repository.ImportDataRepository;
+import edu.jit.weather_analysis.repository.SummaryRepository;
 import edu.jit.weather_analysis.repository.WeatherSearchRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 天气控制器
@@ -38,5 +40,17 @@ public class WeatherController {
         // 传递数据给前端页面
         model.addAttribute("weather", weather);
         return "search";
+    }
+
+    @GetMapping("/summary")
+    public String getSummary(Model model) {
+        // 调用统计每年的天气方法
+        SummaryRepository.summary();
+        // 调用方法返回所有每年的天气数据
+        List<WeatherWritable> weathers = SummaryRepository.getSummaryAll();
+        // 传递给前端页面
+        model.addAttribute("weathers", weathers);
+        // 跳转到统计页面
+        return "summary";
     }
 }
