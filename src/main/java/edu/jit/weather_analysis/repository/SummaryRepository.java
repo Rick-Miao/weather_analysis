@@ -114,8 +114,7 @@ public class SummaryRepository {
             scan.addColumn(fm, column4);
             // 输出表
             String outputTableName = "weather_summary";
-            if (isSummaryTableReady(outputTableName, 59)) {
-                System.out.println("汇总表已存在且行数为59，跳过MapReduce任务");
+            if (HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
                 return;
             }
             HBaseUtils.createTable(outputTableName, "info", false);
@@ -156,37 +155,5 @@ public class SummaryRepository {
             throw new RuntimeException(e);
         }
         return weathers;
-    }
-
-    /**
-     * 检查汇总表是否存在并且行数是否等于指定值
-     */
-    private static boolean isSummaryTableReady(String tableName, int expectedRowCount) {
-        try {
-            Table table = HBaseUtils.getTable(tableName);
-            if (table == null) {
-                System.out.println("表不存在: " + tableName);
-                return false;
-            }
-            Scan scan = new Scan();
-            ResultScanner scanner = table.getScanner(scan);
-            int rowCount = 0;
-
-            for (Result result : scanner) {
-                rowCount++;
-                if (rowCount > expectedRowCount) {
-                    break; // 提前退出
-                }
-            }
-
-            scanner.close();
-
-            System.out.println("当前汇总表行数: " + rowCount);
-
-            return rowCount == expectedRowCount;
-        } catch (IOException e) {
-            System.err.println("读取汇总表失败: " + e.getMessage());
-            return false;
-        }
     }
 }
