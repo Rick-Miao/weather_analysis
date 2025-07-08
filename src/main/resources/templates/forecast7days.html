@@ -169,11 +169,15 @@
         <div class="site-title">
             <h1>天气数据分析系统</h1>
         </div>
-        <div class="guest-message">游客，你好！<a href="/login"
-                                                style="color: #00c9a7; text-decoration: underline;">立即登录</a></div>
-        <div class="login-message">
-            <a href="#" style="color: #00c9a7;">用户昵称</a>，你好！
-            <a href="#logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
+        <!-- 用户状态消息 -->
+        <div th:if="${session.user == null}" class="message" style="font-size: 1.1em; color: #333;">
+            游客，你好！<a href="login" style="color: #00c9a7; text-decoration: underline;">立即登录</a>
+        </div>
+
+        <!-- 登录状态容器 -->
+        <div th:if="${session.user != null}" class="message" style="font-size: 1.1em; color: #00c9a7;">
+            <a href="#" style="color: #00c9a7;" th:text="${session.user.nickname}"></a>，你好！
+            <a href="logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
         </div>
     </div>
 

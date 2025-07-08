@@ -187,13 +187,13 @@
         <h2>七天天气预测</h2>
         <!-- 七天天气预测 -->
         <div class="seven-day-forecast">
-            <!-- 周一 -->
             <div class="day-card" th:each="weather : ${weathers}">
                 <h3 th:text="${weather.date}"></h3>
                 <img th:if="${weather.precipitation==0}" class="day-icon" src="/images/sun.png" alt="晴">
                 <img th:if="${weather.precipitation>0}" class="day-icon" src="/images/rain.png" alt="雨">
                 <p th:text="${#numbers.formatDecimal(weather.minTemperature,1,'COMMA',2,'POINT')} + '/' + ${#numbers.formatDecimal(weather.maxTemperature,1,'COMMA',2,'POINT')} + '°C'"></p>
             </div>
+            <a class="btn-link" href="forecast7days">进入详细页面</a>
         </div>
     </div>
 

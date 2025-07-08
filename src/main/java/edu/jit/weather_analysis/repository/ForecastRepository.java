@@ -3,6 +3,7 @@ package edu.jit.weather_analysis.repository;
 import edu.jit.weather_analysis.entity.WeatherWritable;
 import edu.jit.weather_analysis.hbase.HBaseUtils;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
@@ -18,7 +19,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 预测仓库类
@@ -125,6 +128,11 @@ public class ForecastRepository {
 
     public static void forecast7days() {
         try {
+            String todayDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+            if (hasTodayForecast(todayDate)) {
+                System.out.println("今日预测数据已存在，跳过执行");
+                return;
+            }
             // 输入表
             String inputTableName = "weather";
             Table inputTable = HBaseUtils.getTable(inputTableName);
@@ -179,5 +187,21 @@ public class ForecastRepository {
             throw new RuntimeException(e);
         }
         return weathers;
+    }
+
+    private static boolean hasTodayForecast(String todayDate) throws IOException {
+        try (Table table = HBaseUtils.getTable("forecast")) {
+            Scan scan = new Scan();
+            // 使用正则匹配行键以 "_dd/MM/yyyy" 结尾的行
+            String regex = ".*_" + Pattern.quote(todayDate); // 转义特殊字符
+            Filter filter = new RowFilter(
+                    CompareFilter.CompareOp.EQUAL,
+                    new RegexStringComparator(regex)
+            );
+            scan.setFilter(filter);
+            scan.setLimit(1); // 优化：找到1条即返回
+
+            return table.getScanner(scan).iterator().hasNext();
+        }
     }
 }
