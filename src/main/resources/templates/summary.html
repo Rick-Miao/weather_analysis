@@ -165,6 +165,10 @@
         </div>
     </div>
 
+    <!-- 返回首页链接 -->
+    <div class="back-home">
+        <a href="index">返回首页</a>
+    </div>
 
     <!-- 天气统计数据模块 -->
     <div class="stats-section">
@@ -192,7 +196,8 @@
                 <tr th:each="weather : ${weathers}">
                     <td data-label="城市编号" th:text="${weather.code}"></td>
                     <td data-label="年份" th:text="${weather.date}"></td>
-                    <td data-label="降水量" th:text="${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')}"></td>
+                    <td data-label="降水量"
+                        th:text="${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')}"></td>
                     <td data-label="最高温度" th:text="${weather.maxTemperature}"></td>
                     <td data-label="最低温度" th:text="${weather.minTemperature}"></td>
                     <td data-label="平均温度" th:text="${#numbers.formatDecimal(weather.avgTemperature,1,2)}"></td>
@@ -200,13 +205,7 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- 返回首页链接 -->
-        <div class="back-home">
-            <a href="index">返回首页</a>
-        </div>
     </div>
-
 </div>
 
 </body>
