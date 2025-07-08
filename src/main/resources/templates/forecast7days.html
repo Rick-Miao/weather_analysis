@@ -202,7 +202,7 @@
                          th:text="${#numbers.formatDecimal(weather.avgTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
                     <div class="precipitation"
                          th:text="'降水量：' + ${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')} + 'mm'"></div>
-                    <span class="date" th:text="${#dates.format(weather.date, 'MM/dd/yyyy')}"></span>
+                    <span class="date" th:text="${weather.date}"></span>
                 </div>
             </div>
         </div>
