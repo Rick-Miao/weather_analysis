@@ -1,10 +1,7 @@
 package edu.jit.weather_analysis.controller;
 
 import edu.jit.weather_analysis.entity.WeatherWritable;
-import edu.jit.weather_analysis.repository.ForecastRepository;
-import edu.jit.weather_analysis.repository.ImportDataRepository;
-import edu.jit.weather_analysis.repository.SummaryRepository;
-import edu.jit.weather_analysis.repository.WeatherSearchRepository;
+import edu.jit.weather_analysis.repository.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +23,13 @@ public class WeatherController {
     public String importData() {
         // 从hdfs导入数据至hbase表weather中
         ImportDataRepository.run();
+        return "index";
+    }
+
+    @GetMapping("/importAllData")
+    public String importAllData() {
+        // 从hdfs导入数据至hbase表weather中
+        ImportAllDataRepository.run();
         return "index";
     }
 
@@ -53,6 +57,18 @@ public class WeatherController {
         model.addAttribute("weathers", weathers);
         // 跳转到统计页面
         return "summary";
+    }
+
+    @GetMapping("/weatherStationSummary")
+    public String getWeatherStationSummary(Model model) {
+        // 调用方法进行统计
+        WeatherStationSummaryRepository.summary();
+        // 调用方法返回所有站点的统计数据
+        List<WeatherWritable> weathers = WeatherStationSummaryRepository.getSummaryAll();
+        // 传递给前端页面
+        model.addAttribute("weathers", weathers);
+        // 跳转到统计页面
+        return "weatherStationSummary";
     }
 
     @GetMapping("/forecast7days")
