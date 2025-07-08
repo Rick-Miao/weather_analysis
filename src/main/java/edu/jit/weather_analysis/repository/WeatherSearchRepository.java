@@ -18,7 +18,7 @@ public class WeatherSearchRepository {
     public WeatherWritable search(String code, String date) {
         try {
             // 获取表
-            Table table = HBaseUtils.getTable("weather");
+            Table table = HBaseUtils.getTable("weather_all");
             // 定义行键
             String rowKey = code + "_" + date;
             byte[] rk = Bytes.toBytes(rowKey);
