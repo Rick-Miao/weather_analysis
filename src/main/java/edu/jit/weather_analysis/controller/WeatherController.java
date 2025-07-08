@@ -1,6 +1,7 @@
 package edu.jit.weather_analysis.controller;
 
 import edu.jit.weather_analysis.entity.WeatherWritable;
+import edu.jit.weather_analysis.repository.ForecastRepository;
 import edu.jit.weather_analysis.repository.ImportDataRepository;
 import edu.jit.weather_analysis.repository.SummaryRepository;
 import edu.jit.weather_analysis.repository.WeatherSearchRepository;
@@ -52,5 +53,17 @@ public class WeatherController {
         model.addAttribute("weathers", weathers);
         // 跳转到统计页面
         return "summary";
+    }
+
+    @GetMapping("/forecast7days")
+    public String getForecast7days(Model model) {
+        // 调用方法进行预测
+        ForecastRepository.forecast7days();
+        // 调用方法返回7天预测数据
+        List<WeatherWritable> weathers = ForecastRepository.get7days();
+        // 传递给前端页面
+        model.addAttribute("weathers", weathers);
+        // 跳转到统计页面
+        return "forecast7days";
     }
 }

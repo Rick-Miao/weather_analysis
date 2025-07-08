@@ -188,56 +188,14 @@
         <!-- 七天天气预测 -->
         <div class="seven-day-forecast">
             <!-- 周一 -->
-            <div class="day-card">
-                <h3>周一</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png " alt="晴">
-                <p>22°C / 28°C</p>
-            </div>
-
-            <!-- 周二 -->
-            <div class="day-card">
-                <h3>周二</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png " alt="多云">
-                <p>20°C / 25°C</p>
-            </div>
-
-            <!-- 周三 -->
-            <div class="day-card">
-                <h3>周三</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163698.png " alt="雨">
-                <p>18°C / 24°C</p>
-            </div>
-
-            <!-- 周四 -->
-            <div class="day-card">
-                <h3>周四</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png " alt="晴">
-                <p>21°C / 27°C</p>
-            </div>
-
-            <!-- 周五 -->
-            <div class="day-card">
-                <h3>周五</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163698.png " alt="雨">
-                <p>19°C / 23°C</p>
-            </div>
-
-            <!-- 周六 -->
-            <div class="day-card">
-                <h3>周六</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png " alt="晴">
-                <p>23°C / 30°C</p>
-            </div>
-
-            <!-- 周日 -->
-            <div class="day-card">
-                <h3>周日</h3>
-                <img class="day-icon" src="https://cdn-icons-png.flaticon.com/512/1163/1163698.png " alt="雨">
-                <p>20°C / 26°C</p>
+            <div class="day-card" th:each="weather : ${weathers}">
+                <h3 th:text="${#dates.format(weather.date, 'MM/dd/yyyy')}"></h3>
+                <img th:if="${weather.precipitation==0}" class="day-icon" src="/images/sun.png" alt="晴">
+                <img th:if="${weather.precipitation>0}" class="day-icon" src="/images/rain.png" alt="雨">
+                <p th:text="${#numbers.formatDecimal(weather.minTemperature,1,'COMMA',2,'POINT')} + '/' + ${#numbers.formatDecimal(weather.maxTemperature,1,'COMMA',2,'POINT')} + '°C'"></p>
             </div>
         </div>
     </div>
-
 
 
     <div class="module">

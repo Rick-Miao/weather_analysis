@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>天气数据分析系统 - 七天预测</title>
+    <style>
+        /* 主体样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to right, #a8edea, #fed6e3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 用户状态模块 */
+        .user-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+        }
+
+        .site-title h1 {
+            font-size: 1.5em;
+            color: #333;
+            margin: 0;
+        }
+
+        .guest-message,
+        .login-message {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .login-message {
+            display: none;
+        }
+
+        /* 返回首页链接 */
+        .back-home {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .back-home a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00c9a7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-home a:hover {
+            background-color: #00b090;
+        }
+
+        /* 天气预测模块 */
+        .forecast-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        /* 图片占位图 */
+        .forecast-image {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .forecast-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 天气卡片容器 */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* 单个天气卡片 */
+        .weather-card {
+            background-color: #ffffffdd;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .city-code {
+            font-weight: bold;
+            color: #00c9a7;
+            margin-bottom: 10px;
+        }
+
+        .min-temp {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.9em;
+            color: #007acc;
+        }
+
+        .max-temp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9em;
+            color: #ff4d4d;
+        }
+
+        .avg-temp {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .precipitation {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            display: block;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        @media (max-width: 960px) {
+            .weather-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 用户状态显示 -->
+    <div class="user-status">
+        <div class="site-title">
+            <h1>天气数据分析系统</h1>
+        </div>
+        <div class="guest-message">游客，你好！<a href="/login"
+                                                style="color: #00c9a7; text-decoration: underline;">立即登录</a></div>
+        <div class="login-message">
+            <a href="#" style="color: #00c9a7;">用户昵称</a>，你好！
+            <a href="#logout" style="margin-left: 15px; color: #00c9a7;">退出登录</a>
+        </div>
+    </div>
+
+    <!-- 返回首页链接 -->
+    <div class="back-home">
+        <a href="/">返回首页</a>
+    </div>
+
+    <!-- 七天预测模块 -->
+    <div class="forecast-section">
+        <h2>七天天气预测</h2>
+
+        <div class="forecast-image">
+            <img src="https://picsum.photos/id/1018/800/300 " alt="七天天气预测示意图">
+        </div>
+
+        <!-- 天气网格布局 -->
+        <div class="weather-grid">
+            <div th:each="weather : ${weathers}">
+                <div class="weather-card">
+                    <div class="min-temp"
+                         th:text="'最低温：' + ${#numbers.formatDecimal(weather.minTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
+                    <div class="max-temp"
+                         th:text="'最高温：' + ${#numbers.formatDecimal(weather.maxTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
+                    <div class="avg-temp"
+                         th:text="${#numbers.formatDecimal(weather.avgTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
+                    <div class="precipitation"
+                         th:text="'降水量：' + ${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')} + 'mm'"></div>
+                    <span class="date" th:text="${#dates.format(weather.date, 'MM/dd/yyyy')}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

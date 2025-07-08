@@ -16,7 +16,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * 预测仓库类
@@ -34,9 +36,9 @@ public class ForecastRepository {
             byte[] column3 = Bytes.toBytes("minTemperature");
             byte[] column4 = Bytes.toBytes("avgTemperature");
             // 行键
-            String rowkey = Bytes.toString(value.getRow());
-            String code = rowkey.split("_")[0];
-            String date = rowkey.split("_")[1];
+            String rowKey = Bytes.toString(value.getRow());
+            String code = rowKey.split("_")[0];
+            String date = rowKey.split("_")[1];
             // 未来7天预测天气
             // 今天
             Calendar calendar = Calendar.getInstance();
@@ -50,9 +52,9 @@ public class ForecastRepository {
                 // 加1天, 完整循环是7天, 包含今天
                 calendar.add(Calendar.DATE, 1);
                 // 日期格式转换
-                String date_month = sdf.format(calendar.getTime());
+                String day_month = sdf.format(calendar.getTime());
                 // 与历史上的今天对比
-                if (date.startsWith(date_month)) {
+                if (date.startsWith(day_month)) {
                     flag = true;
                 }
                 // 只要是7天中的一天 就跳出循环
@@ -70,6 +72,10 @@ public class ForecastRepository {
             double maxTemperature = Bytes.toDouble(value.getValue(fm, column2));
             double minTemperature = Bytes.toDouble(value.getValue(fm, column3));
             double avgTemperature = Bytes.toDouble(value.getValue(fm, column4));
+            weather.setPrecipitation(precipitation);
+            weather.setMaxTemperature(maxTemperature);
+            weather.setMinTemperature(minTemperature);
+            weather.setAvgTemperature(avgTemperature);
             // 输出 ("code_dd/MM",w)
             context.write(new Text(code + "_" + date.substring(0, date.lastIndexOf("/"))), weather);
         }
@@ -80,15 +86,14 @@ public class ForecastRepository {
         protected void reduce(Text key, Iterable<WeatherWritable> values, Reducer<Text, WeatherWritable, NullWritable, Mutation>.Context context) throws IOException, InterruptedException {
             // 历史上的今天 数据计算平均值
             // 今天
-            Calendar calendar = Calendar.getInstance();
             WeatherWritable weatherWritable = new WeatherWritable();
             int count = 0;
             for (WeatherWritable w : values) {
                 weatherWritable.setCode(w.getCode());
                 weatherWritable.setDate(w.getDate());
                 weatherWritable.setPrecipitation(weatherWritable.getPrecipitation() + w.getPrecipitation());
-                weatherWritable.setMaxTemperature(Math.max(weatherWritable.getMaxTemperature(), w.getMaxTemperature()));
-                weatherWritable.setMinTemperature(Math.min(weatherWritable.getMinTemperature(), w.getMinTemperature()));
+                weatherWritable.setMaxTemperature(weatherWritable.getMaxTemperature() + w.getMaxTemperature());
+                weatherWritable.setMinTemperature(weatherWritable.getMinTemperature() + w.getMinTemperature());
                 weatherWritable.setAvgTemperature(weatherWritable.getAvgTemperature() + w.getAvgTemperature());
                 count++;
             }
@@ -118,7 +123,7 @@ public class ForecastRepository {
         }
     }
 
-    public static void main(String[] args) {
+    public static void forecast7days() {
         try {
             // 输入表
             String inputTableName = "weather";
@@ -136,9 +141,6 @@ public class ForecastRepository {
             scan.addColumn(fm, column4);
             // 输出表
             String outputTableName = "forecast";
-            // if (HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
-            //     return;
-            // }
             HBaseUtils.createTable(outputTableName, "info", true);
             // 创建job
             Job job = Job.getInstance(HBaseUtils.getConf(), "forecast");
@@ -152,5 +154,30 @@ public class ForecastRepository {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<WeatherWritable> get7days() {
+        List<WeatherWritable> weathers = new ArrayList<>();
+        try {
+            Table table = HBaseUtils.getTable("forecast");
+            Scan scan = new Scan();
+            ResultScanner scanner = table.getScanner(scan);
+            // 遍历
+            for (Result result : scanner) {
+                // 读取值
+                String rowKey = Bytes.toString(result.getRow());
+                double precipitation = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("precipitation")));
+                double maxTemperature = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("maxTemperature")));
+                double minTemperature = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("minTemperature")));
+                double avgTemperature = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("avgTemperature")));
+                // 实例化对象
+                WeatherWritable weather = new WeatherWritable(rowKey.split("_")[0], rowKey.split("_")[1], precipitation, maxTemperature, minTemperature, avgTemperature);
+                // 添加到集合
+                weathers.add(weather);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return weathers;
     }
 }
