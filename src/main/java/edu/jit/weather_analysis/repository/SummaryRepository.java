@@ -132,11 +132,68 @@ public class SummaryRepository {
         }
     }
 
-    public static List<WeatherWritable> getSummaryAll() {
+    public static void summaryByCode() {
+        try {
+            // 输入表
+            String inputTableName = "weather_all";
+            Table inputTable = HBaseUtils.getTable(inputTableName);
+            Scan scan = new Scan();
+            byte[] fm = Bytes.toBytes("info");
+            byte[] column1 = Bytes.toBytes("precipitation");
+            byte[] column2 = Bytes.toBytes("maxTemperature");
+            byte[] column3 = Bytes.toBytes("minTemperature");
+            byte[] column4 = Bytes.toBytes("avgTemperature");
+            scan.addFamily(fm);
+            scan.addColumn(fm, column1);
+            scan.addColumn(fm, column2);
+            scan.addColumn(fm, column3);
+            scan.addColumn(fm, column4);
+            // 输出表
+            String outputTableName = "weather_summary_by_station_year";
+            // if (HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
+            //     return;
+            // }
+            HBaseUtils.createTable(outputTableName, "info", false);
+            // 创建job
+            Job job = Job.getInstance(HBaseUtils.getConf(), "summary");
+            // 设置mapper
+            TableMapReduceUtil.initTableMapperJob(inputTableName, scan, SummaryMapper.class, Text.class, WeatherWritable.class, job);
+            // 设置reducer
+            TableMapReduceUtil.initTableReducerJob(outputTableName, SummaryReducer.class, job);
+            // 运行
+            boolean success = job.waitForCompletion(true);
+            System.out.println(success ? "成功" : "失败");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void fullSummary() {
+        String inputTableName = "weather_all";
+        try {
+            HBaseUtils.createTable("weather_summary_by_station_year", "info", false);
+            Scan scan = new Scan();
+            scan.addFamily(Bytes.toBytes("info"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("precipitation"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("maxTemperature"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("minTemperature"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("avgTemperature"));
+            Job job = Job.getInstance(HBaseUtils.getConf(), "Weather_Full_Summary");
+            TableMapReduceUtil.initTableMapperJob(inputTableName, scan, SummaryMapper.class, Text.class, WeatherWritable.class, job);
+            TableMapReduceUtil.initTableReducerJob("weather_summary_by_station_year", SummaryReducer.class, job);
+            boolean success = job.waitForCompletion(true);
+            System.out.println(success ? "成功" : "失败");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<WeatherWritable> getSummaryByCode(String code) {
         List<WeatherWritable> weathers = new ArrayList<>();
         try {
-            Table table = HBaseUtils.getTable("weather_summary");
+            Table table = HBaseUtils.getTable("weather_summary_by_station_year");
             Scan scan = new Scan();
+            scan.setRowPrefixFilter(Bytes.toBytes(code + "_"));
             ResultScanner scanner = table.getScanner(scan);
             // 遍历
             for (Result result : scanner) {

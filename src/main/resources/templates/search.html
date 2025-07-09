@@ -83,7 +83,7 @@
             justify-content: center;
         }
 
-        .query-form input[type="text"],
+        .query-form select,
         .query-form input[type="text"] {
             padding: 10px;
             border: 1px solid #ccc;
@@ -186,14 +186,24 @@
             <img src="/images/searchbg.jpg" alt="天气查询示意图">
         </div>
 
-        <form th:action="searchWeather" method="get" class="query-form">
+        <form th:action="@{/searchWeather}" method="post" class="query-form">
             <label>
                 城市编号:
-                <input type="text" name="code" placeholder="例如：83377"/>
+                <select name="code">
+                    <option value="">请选择城市编号</option>
+                    <!-- 可以根据实际数据动态生成 -->
+                    <option
+                            th:each="city : ${cityCodeNameMap}"
+                            th:value="${city.key}"
+                            th:text="${city.key + ' - ' + city.value}"
+                            th:selected="${selectedCode == city.key}">
+                    </option>
+                </select>
             </label>
             <label>
                 日期:
-                <input type="text" name="date" placeholder="DD/MM/YYYY"/>
+                <input type="text" name="date" placeholder="DD/MM/YYYY"
+                       th:value="${selectedDate}"/>
             </label>
             <button type="submit">查询</button>
         </form>

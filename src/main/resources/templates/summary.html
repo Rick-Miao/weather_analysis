@@ -178,6 +178,23 @@
             <img src="/images/summarybg.jpg" alt="天气统计示意图">
         </div>
 
+        <form th:action="@{/summaryWeather}" method="post" class="query-form">
+            <label>
+                城市编号:
+                <select name="code">
+                    <option value="">请选择城市编号</option>
+                    <!-- 可以根据实际数据动态生成 -->
+                    <option
+                            th:each="city : ${cityCodeNameMap}"
+                            th:value="${city.key}"
+                            th:text="${city.key + ' - ' + city.value}"
+                            th:selected="${selectedCode == city.key}">
+                    </option>
+                </select>
+            </label>
+            <button type="submit">查询</button>
+        </form>
+
         <!-- 查询结果表格 -->
         <div style="margin-top: 40px;">
             <h3>统计数据列表</h3>

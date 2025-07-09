@@ -113,7 +113,7 @@ public class ImportAllDataRepository {
             Job job = Job.getInstance(HBaseUtils.getConf(), "ImportData");
             // 设置输入
             job.setInputFormatClass(TextInputFormat.class);
-            TextInputFormat.addInputPath(job, new Path("hdfs://master:9000/brazil_weather/*"));
+            TextInputFormat.addInputPath(job, new Path("hdfs://master:9000/brazil_weather/conventional_weather_stations_inmet_brazil_1961_2019.csv"));
             // 设置mapper
             job.setMapperClass(ImportMapper.class);
             job.setMapOutputKeyClass(Text.class);
