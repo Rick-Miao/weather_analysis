@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>天气数据分析系统 - 七天预测</title>
+    <title>天气数据分析系统 - 数据量统计</title>
     <link rel="stylesheet" href="/css/css.css">
 </head>
 <body>
@@ -32,30 +32,21 @@
         <a href="/">返回首页</a>
     </div>
 
-    <!-- 七天预测模块 -->
+    <!-- 数据量统计模块 -->
     <div class="model-section">
-        <h2>七天天气预测</h2>
+        <h2>城市数据量统计</h2>
 
         <div class="bg-image">
-            <img src="/images/forecastbg.jpg" alt="七天天气预测示意图">
+            <img src="/images/countbg.jpg" alt="数据统计示意图">
         </div>
 
-        <!-- 天气网格布局 -->
-        <div class="weather-grid">
-            <div th:each="weather : ${weathers}">
-                <div class="weather-card">
-                    <div class="min-temp"
-                         th:text="'最低温：' + ${#numbers.formatDecimal(weather.minTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
-                    <div class="max-temp"
-                         th:text="'最高温：' + ${#numbers.formatDecimal(weather.maxTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
-                    <div class="avg-temp"
-                         th:text="${#numbers.formatDecimal(weather.avgTemperature,1,'COMMA',2,'POINT')} + '°C'"></div>
-                    <div class="precipitation"
-                         th:text="'降水量：' + ${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')} + 'mm'"></div>
-                    <span class="date" th:text="${weather.date}"></span>
-                </div>
-            </div>
-        </div>
+        <!-- 数据列表 -->
+        <ul class="data-list">
+            <li class="data-item" th:each="item : ${counts}">
+                <span class="city-code" th:text="'城市编号：' + ${item.key}"></span>
+                <span class="data-count" th:text="'数据量：' + ${item.value} + ' 条'"></span>
+            </li>
+        </ul>
     </div>
 </div>
 <div class="footer">

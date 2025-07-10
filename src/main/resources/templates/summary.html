@@ -4,145 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>天气数据分析系统 - 统计页面</title>
-    <style>
-        /* 主体样式 */
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: linear-gradient(to right, #a8edea, #fed6e3);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* 用户状态模块 */
-        .user-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-        }
-
-        .site-title h1 {
-            font-size: 1.5em;
-            color: #333;
-            margin: 0;
-        }
-
-        .guest-message,
-        .login-message {
-            font-size: 1.1em;
-            color: #333;
-        }
-
-        .login-message {
-            display: none;
-        }
-
-        /* 返回首页链接 */
-        .back-home {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .back-home a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #00c9a7;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .back-home a:hover {
-            background-color: #00b090;
-        }
-
-        /* 查询区域样式 */
-        .stats-section {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 20px;
-        }
-
-        /* 图片占位图 */
-        .stats-image {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .stats-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 表格样式 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #00c9a7;
-            color: white;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            thead {
-                display: none;
-            }
-
-            tr {
-                margin-bottom: 15px;
-            }
-
-            td {
-                position: relative;
-                text-align: left;
-                padding-left: 50%;
-                border: none;
-                border-bottom: 1px solid #ddd;
-            }
-
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 15px;
-                font-weight: bold;
-                color: #555;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/css.css">
 </head>
 <body>
 
@@ -171,10 +33,10 @@
     </div>
 
     <!-- 天气统计数据模块 -->
-    <div class="stats-section">
+    <div class="model-section">
         <h2>年度天气数据统计</h2>
 
-        <div class="stats-image">
+        <div class="bg-image">
             <img src="/images/summarybg.jpg" alt="天气统计示意图">
         </div>
 
@@ -222,8 +84,81 @@
                 </tbody>
             </table>
         </div>
+        <!--数据可视化区域-->
+        <div style="margin-top:60px;">
+            <h3>温度趋势可视化</h3>
+            <div id="chart" style="width: 100%; height: 400px;"></div>
+        </div>
     </div>
 </div>
-
+<div class="footer">
+    <p>&copy; 2025 缪彭哲. 保留所有权利。</p>
+</div>
 </body>
+<script src="/js/echarts.min.js"></script>
+<script th:inline="javascript">
+    const chartDom = document.getElementById('chart');
+    const myChart = echarts.init(chartDom);
+    const ws = [[${weathers}]];
+    const dates = ws.map(w => w.date);
+    const maxTemps = ws.map(w => w.maxTemperature);
+    const minTemps = ws.map(w => w.minTemperature);
+    const avgTemps = ws.map(w => w.avgTemperature);
+    const option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['最高温度', '最低温度', '平均温度']
+        },
+        toolbox: {
+            show: true,
+            orient: 'horizontal',
+            itemSize: 15,
+            itemGap: 10,
+            showTitle: true,
+            feature: {
+                dataZoom: {
+                    show: true,
+                    title: {
+                        zoom: '区域缩放',
+                        back: '区域缩放还原'
+                    }
+                },
+                saveAsImage: {
+                    show: true,
+                    title: '保存图片',
+                    type: 'png'
+                }
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: dates
+        },
+        yAxis: {
+            type: 'value',
+            name: '温度 (°C)'
+        },
+        series: [
+            {
+                name: '最高温度',
+                type: 'line',
+                data: maxTemps
+            },
+            {
+                name: '最低温度',
+                type: 'line',
+                data: minTemps
+            },
+            {
+                name: '平均温度',
+                type: 'line',
+                data: avgTemps
+            },
+        ]
+    };
+    myChart.setOption(option);
+</script>
 </html>
+

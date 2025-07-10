@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 天气控制器
@@ -40,7 +41,12 @@ public class WeatherController {
 
     @GetMapping("/search")
     public String search(Model model) {
-        model.addAttribute("cityCodeNameMap", cityCodeRepository.getAllCityCodesWithNames());
+        Map<String, String> cityCodeNameMap = cityCodeRepository.getAllCityCodesWithNames();
+        List<Map.Entry<String, String>> sortedEntries = cityCodeNameMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList());
+        model.addAttribute("cityCodeNameMap", sortedEntries);
         return "search";
     }
 
@@ -49,7 +55,12 @@ public class WeatherController {
         // 调用查询方法
         WeatherWritable weather = weatherSearchRepository.search(code, date);
         // 必须重新传递城市数据
-        model.addAttribute("cityCodeNameMap", cityCodeRepository.getAllCityCodesWithNames());
+        Map<String, String> cityCodeNameMap = cityCodeRepository.getAllCityCodesWithNames();
+        List<Map.Entry<String, String>> sortedEntries = cityCodeNameMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList());
+        model.addAttribute("cityCodeNameMap", sortedEntries);
         model.addAttribute("weather", weather);
 
         // 保留用户选择的城市和日期值
@@ -60,7 +71,12 @@ public class WeatherController {
 
     @GetMapping("/summary")
     public String getSummary(Model model) {
-        model.addAttribute("cityCodeNameMap", cityCodeRepository.getAllCityCodesWithNames());
+        Map<String, String> cityCodeNameMap = cityCodeRepository.getAllCityCodesWithNames();
+        List<Map.Entry<String, String>> sortedEntries = cityCodeNameMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList());
+        model.addAttribute("cityCodeNameMap", sortedEntries);
         // 跳转到统计页面
         return "summary";
     }
@@ -73,7 +89,12 @@ public class WeatherController {
         // 调用方法返回所有每年的天气数据
         List<WeatherWritable> weathers = SummaryRepository.getSummaryByCode(code);
         // 传递给前端页面
-        model.addAttribute("cityCodeNameMap", cityCodeRepository.getAllCityCodesWithNames());
+        Map<String, String> cityCodeNameMap = cityCodeRepository.getAllCityCodesWithNames();
+        List<Map.Entry<String, String>> sortedEntries = cityCodeNameMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList());
+        model.addAttribute("cityCodeNameMap", sortedEntries);
         model.addAttribute("weathers", weathers);
         // 保留用户选择的城市和日期值
         model.addAttribute("selectedCode", code);
@@ -84,7 +105,7 @@ public class WeatherController {
     @GetMapping("/weatherStationSummary")
     public String getWeatherStationSummary(Model model) {
         // 调用方法进行统计
-        WeatherStationSummaryRepository.summary();
+        // WeatherStationSummaryRepository.summary();
         // 调用方法返回所有站点的统计数据
         List<WeatherWritable> weathers = WeatherStationSummaryRepository.getSummaryAll();
         // 传递给前端页面
@@ -107,8 +128,14 @@ public class WeatherController {
 
     @GetMapping("/count")
     public String getCount(Model model) {
-        List<CountItem> counts = dataService.getCityDataCounts();
-        model.addAttribute("counts", counts);
+        // DataCountRepository.run();
+        Map<String, Integer> counts = DataCountRepository.getAllCounts();
+        // 按 key 升序排序（String 自然排序）
+        List<Map.Entry<String, Integer>> sortedCounts = counts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList());
+        model.addAttribute("counts", sortedCounts);
         return "count";
     }
 }
