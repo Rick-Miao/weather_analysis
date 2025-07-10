@@ -151,9 +151,9 @@ public class SummaryRepository {
             scan.addColumn(fm, column4);
             // 输出表
             String outputTableName = "weather_summary_by_station_year";
-            // if (HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
-            //     return;
-            // }
+            if (HBaseUtils.getAdmin().tableExists(TableName.valueOf(outputTableName)) && HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
+                return;
+            }
             HBaseUtils.createTable(outputTableName, "info", false);
             // 创建job
             Job job = Job.getInstance(HBaseUtils.getConf(), "summary");
