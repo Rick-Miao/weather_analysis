@@ -2,6 +2,7 @@ package edu.jit.weather_analysis.repository;
 
 import edu.jit.weather_analysis.entity.WeatherWritable;
 import edu.jit.weather_analysis.hbase.HBaseUtils;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
@@ -114,7 +115,7 @@ public class SummaryRepository {
             scan.addColumn(fm, column4);
             // 输出表
             String outputTableName = "weather_summary";
-            if (HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
+            if (HBaseUtils.getAdmin().tableExists(TableName.valueOf(outputTableName)) && HBaseUtils.getTable(outputTableName).getScanner(new Scan()).next() != null) {
                 return;
             }
             HBaseUtils.createTable(outputTableName, "info", false);
