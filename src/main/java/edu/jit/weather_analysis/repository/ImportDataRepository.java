@@ -20,7 +20,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import java.io.IOException;
 
 /**
- * 导入数据仓库类s
+ * 导入数据仓库类
  *
  * @author 缪彭哲
  */

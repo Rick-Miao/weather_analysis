@@ -1,5 +1,6 @@
 package edu.jit.weather_analysis.repository;
 
+import edu.jit.weather_analysis.entity.CityWritable;
 import edu.jit.weather_analysis.hbase.HBaseUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -18,11 +19,14 @@ import java.util.Map;
  */
 @Component
 public class CityCodeRepository {
-    public Map<String, String> getAllCityCodesWithNames() {
-        Map<String, String> cityMap = new HashMap<>();
+    public static Map<String, CityWritable> getAllCityDetails() {
+        Map<String, CityWritable> cityMap = new HashMap<>();
         try (Table table = HBaseUtils.getTable("city")) {  // 从 city 表查询
             Scan scan = new Scan();
-            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("name")); // 只查询 name 列
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("name"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("latitude"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("longitude"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("altitude"));
             scan.setCaching(1000);
 
             try (ResultScanner scanner = table.getScanner(scan)) {
@@ -32,7 +36,11 @@ public class CityCodeRepository {
                             Bytes.toBytes("info"),
                             Bytes.toBytes("name")
                     )); // 城市名称
-                    cityMap.put(code, name);
+                    double latitude = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("latitude")));
+                    double longitude = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("longitude")));
+                    double altitude = Bytes.toDouble(result.getValue(Bytes.toBytes("info"), Bytes.toBytes("altitude")));
+
+                    cityMap.put(code, new CityWritable(code, name, latitude, longitude, altitude));
                 }
             }
         } catch (Exception e) {

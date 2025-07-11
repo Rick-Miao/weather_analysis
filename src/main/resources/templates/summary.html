@@ -47,10 +47,10 @@
                     <option value="">请选择城市编号</option>
                     <!-- 可以根据实际数据动态生成 -->
                     <option
-                            th:each="city : ${cityCodeNameMap}"
-                            th:value="${city.key}"
-                            th:text="${city.key + ' - ' + city.value}"
-                            th:selected="${selectedCode == city.key}">
+                            th:each="city : ${cityCodeName}"
+                            th:value="${city.code}"
+                            th:text="${city.code + ' - ' + city.name}"
+                            th:selected="${selectedCode == city.code}">
                     </option>
                 </select>
             </label>

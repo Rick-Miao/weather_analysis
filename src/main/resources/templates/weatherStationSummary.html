@@ -47,6 +47,8 @@
                 <thead>
                 <tr>
                     <th>城市编号</th>
+                    <th>经度</th>
+                    <th>纬度</th>
                     <th>降水量 (mm)</th>
                     <th>最高温度 (°C)</th>
                     <th>最低温度 (°C)</th>
@@ -56,8 +58,10 @@
                 <tbody>
                 <tr th:each="weather : ${weathers}">
                     <td data-label="城市编号" th:text="${weather.code}"></td>
+                    <td data-label="经度" th:text="${weather.value[0]}"></td>
+                    <td data-label="纬度" th:text="${weather.value[1]}"></td>
                     <td data-label="降水量"
-                        th:text="${#numbers.formatDecimal(weather.precipitation,1,'COMMA',2,'POINT')}"></td>
+                        th:text="${#numbers.formatDecimal(weather.value[2],1,'COMMA',2,'POINT')}"></td>
                     <td data-label="最高温度" th:text="${weather.maxTemperature}"></td>
                     <td data-label="最低温度" th:text="${weather.minTemperature}"></td>
                     <td data-label="平均温度" th:text="${#numbers.formatDecimal(weather.avgTemperature,1,2)}"></td>
@@ -65,10 +69,105 @@
                 </tbody>
             </table>
         </div>
+        <!--数据可视化区域-->
+        <div style="margin-top:60px;">
+            <h3>降水量对比</h3>
+            <div id="chart" style="width: 100%; height: 400px;"></div>
+        </div>
     </div>
 </div>
 <div class="footer">
     <p>&copy; 2025 缪彭哲. 保留所有权利。</p>
 </div>
 </body>
+<script src="/js/echarts.min.js"></script>
+<script th:inline="javascript">
+    const chartDom = document.getElementById('chart');
+    const ws = [[${weathers}]];
+    fetch('/map/gadm41_BRA_1.json')
+        .then(response => response.json())
+        .then(geoJson => {
+            // 注册巴西地图
+            echarts.registerMap('brazil', geoJson);
+            // 初始化图表
+            const myChart = echarts.init(chartDom);
+            // 转换weathers数据为散点图格式
+            const scatterData = ws.map(item => {
+                return {
+                    name: item.name,
+                    value: item.value
+                };
+            });
+            // 配置
+            const option = {
+                // 坐标系设置
+                geo: {
+                    map: 'brazil',
+                    roam: true, // 允许拖拽旋转
+                    label: {
+                        show: true,  // 显示地名标签
+                    },
+                    itemStyle: {
+                        areaColor: '#e0f7fa',   // 地图区域颜色
+                        borderColor: '#81d4fa', // 边界线颜色
+                    },
+                },
+                // 数据系列
+                series: [
+                    {
+                        name: '降水量',
+                        type: 'scatter',
+                        coordinateSystem: 'geo',
+                        data: scatterData,
+                        symbolSize: function (val) {
+                            // 动态调整点的大小（降水量越大，点越大）
+                            return val[2] / 10000; // 调整除数以控制大小
+                        },
+                        encode: {
+                            value: 2,
+                        },
+                        label: {
+                            show: false,
+                            formatter: '{b}: {c}', // 显示名称和降水量
+                        },
+                        itemStyle: {
+                            color: '#ff5722', // 散点颜色
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                            },
+                        },
+                    },
+                ],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return `城市：${params.name}<br />降水量：${params.value[2]} mm`;
+                    },
+                },
+                visualMap: {
+                    min: 0,
+                    max: 100, // 根据数据调整最大值
+                    calculable: true,
+                    inRange: {
+                        color: ['#50a3ba', '#eac736', '#d94e5d'], // 颜色渐变
+                    },
+                    textStyle: {
+                        color: '#fff',
+                    },
+                },
+            }
+            myChart.setOption(option);
+
+            // 响应式调整
+            window.addEventListener('resize', function () {
+                myChart.resize();
+            });
+        })
+        .catch(error => {
+            console.error('加载地图失败：', error);
+        });
+
+</script>
 </html>

@@ -30,7 +30,8 @@ public class DataCountRepository {
         private Text code = new Text();
 
         @Override
-        protected void map(ImmutableBytesWritable key, Result value, Mapper<ImmutableBytesWritable, Result, Text, IntWritable>.Context context) throws IOException, InterruptedException {
+        protected void map(ImmutableBytesWritable key, Result value, Mapper<ImmutableBytesWritable, Result,
+                Text, IntWritable>.Context context) throws IOException, InterruptedException {
             String rowKey = Bytes.toString(key.get());
             String[] parts = rowKey.split("_");
             if (parts.length >= 1) {
@@ -42,7 +43,8 @@ public class DataCountRepository {
 
     public static class CountReducer extends TableReducer<Text, IntWritable, ImmutableBytesWritable> {
         @Override
-        protected void reduce(Text key, Iterable<IntWritable> values, Reducer<Text, IntWritable, ImmutableBytesWritable, Mutation>.Context context) throws IOException, InterruptedException {
+        protected void reduce(Text key, Iterable<IntWritable> values, Reducer<Text, IntWritable,
+                ImmutableBytesWritable, Mutation>.Context context) throws IOException, InterruptedException {
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
